@@ -8,6 +8,7 @@ import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/users")
 public class UserController {
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Autowired //this does dependancy injection
     private UserRepository userRepository;
 
@@ -31,9 +35,10 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    @PostMapping
+    @PostMapping("/createUser")
     public User createUser(@RequestBody User user)
     {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
